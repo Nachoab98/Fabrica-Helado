@@ -1,7 +1,9 @@
 package com.example;
-import java.util.List;
+
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.List;
+import java.util.Map;
 
 public class Main {
     public static void main(String[] args) {
@@ -16,9 +18,9 @@ public class Main {
         StockManager stockManager = new StockManager();
 
         // Agregar baldes al stock
-        stockManager.agregarBalde(1, 10.5); 
-        stockManager.agregarBalde(2, 5.0);  
-        stockManager.agregarBalde(3, 7.2);  
+        stockManager.agregarBalde(1, 10.5); // Frambuesa
+        stockManager.agregarBalde(2, 5.0);  // Chocolate
+        stockManager.agregarBalde(3, 7.2);  // Fresa
 
         // Enviar baldes a la sucursal
         stockManager.enviarASucursal(1, "Ramos");
@@ -31,6 +33,12 @@ public class Main {
         List<Helado> stockDisponible = stockManager.getStock();
         for (Helado helado : stockDisponible) {
             System.out.println("ID: " + helado.getId() + ", Sabor: " + helado.getSabor() + ", Peso: " + helado.getKilos());
+        }
+
+        // Obtener peso total y cantidad por sabor
+        Map<String, StockManager.SaborInfo> pesoYCantidadPorSabor = stockManager.getPesoYCantidadPorSabor();
+        for (Map.Entry<String, StockManager.SaborInfo> entry : pesoYCantidadPorSabor.entrySet()) {
+            System.out.println("Sabor: " + entry.getKey() + ", Kilos: " + entry.getValue().getTotalPeso() + ", Cantidad de Baldes: " + entry.getValue().getCantidad());
         }
     }
 }

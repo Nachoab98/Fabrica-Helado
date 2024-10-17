@@ -6,7 +6,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class StockManager {
     private List<Helado> stock = new ArrayList<>();
@@ -72,10 +74,10 @@ public class StockManager {
                 int codigoSabor = rs.getInt("codigo_sabor");
                 double peso = rs.getDouble("peso");
                 String sabor = rs.getString("sabor");
-                Timestamp timestamp = rs.getTimestamp("fecha_ingreso");
+                Timestamp fechaIngreso = rs.getTimestamp("fecha_ingreso");
                 Helado helado = new Helado(codigoSabor, peso, sabor);
                 helado.setId(id);
-                helado.setTimestampIngreso(timestamp.toLocalDateTime());
+                helado.setTimestampIngreso(fechaIngreso.toLocalDateTime());
                 stockList.add(helado);
             }
         } catch (SQLException e) {
@@ -146,6 +148,43 @@ public class StockManager {
             pstmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
+        }
+    }
+
+    public Map<String, SaborInfo> getPesoYCantidadPorSabor() {
+        Map<String, SaborInfo> pesoYCantidadPorSabor = new HashMap<>();
+        String sql = "SELECT codigo_sabor, SUM(peso) as total_peso, COUNT(*) as cantidad FROM stock WHERE en_stock = true GROUP BY codigo_sabor";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql);
+             ResultSet rs = pstmt.executeQuery()) {
+            while (rs.next()) {
+                int codigoSabor = rs.getInt("codigo_sabor");
+                double totalPeso = rs.getDouble("total_peso");
+                int cantidad = rs.getInt("cantidad");
+                String sabor = new Helado().obtenerSabor(codigoSabor);
+                pesoYCantidadPorSabor.put(sabor, new SaborInfo(totalPeso, cantidad));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return pesoYCantidadPorSabor;
+    }
+
+    public static class SaborInfo {
+        private double totalPeso;
+        private int cantidad;
+
+        public SaborInfo(double totalPeso, int cantidad) {
+            this.totalPeso = totalPeso;
+            this.cantidad = cantidad;
+        }
+
+        public double getTotalPeso() {
+            return totalPeso;
+        }
+
+        public int getCantidad() {
+            return cantidad;
         }
     }
 }
