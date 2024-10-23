@@ -18,9 +18,9 @@ public class Main {
         StockManager stockManager = new StockManager();
 
         // Agregar baldes al stock
-        stockManager.agregarBalde(1, 10.5); // Frambuesa
-        stockManager.agregarBalde(2, 5.0);  // Chocolate
-        stockManager.agregarBalde(3, 7.2);  // Fresa
+        stockManager.agregarBalde(11, 10.5); 
+        stockManager.agregarBalde(25, 5.0);  
+        stockManager.agregarBalde(38, 7.2);  
 
         // Enviar baldes a la sucursal
         stockManager.enviarASucursal(1, "Ramos");
